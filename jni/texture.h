@@ -20,7 +20,8 @@
 
 #include "androidassetmanager.hpp"
 
-class Texture {
+class Texture 
+{
 
 public:
 
@@ -37,20 +38,24 @@ public:
 
 };
 
-Texture::Texture(char* filename) {
+Texture::Texture(char* filename)
+{
 
 	this->loadTexture(filename);
 }
 
-Texture::Texture() {
+Texture::Texture()
+{
 }
 
-unsigned char* Texture::loadTGAOnly(char* filename) {
+unsigned char* Texture::loadTGAOnly(char* filename)
+{
 
 	AAsset* texFileAsset = AndroidAssetManager::Inst()->openAsset((char*)filename);
 	int length=0;
 
-	if(texFileAsset) {
+	if(texFileAsset)
+	{
 
 		length = AAsset_getLength(texFileAsset);
 
@@ -58,7 +63,8 @@ unsigned char* Texture::loadTGAOnly(char* filename) {
 
 		char headerbytes[18];
 
-		for (int j=0; j < 18; j++) {
+		for (int j=0; j < 18; j++) 
+		{
 			AAsset_read(texFileAsset, &headerbytes[j], 1);
 		}
 
@@ -80,22 +86,26 @@ unsigned char* Texture::loadTGAOnly(char* filename) {
 		this->RGB = (unsigned char*) malloc(sizeof(unsigned char)*width*height*4);
 
 		// if anything is not up to par, just throw an exception from the parser
-		if (this->RGB == 0) {
+		if (this->RGB == 0)
+		{
 			AAsset_close(texFileAsset);
 			LOGI("Unable to malloc memory");
 			return NULL;
 		}
-		if (datatypecode != 2 && datatypecode != 10) {
+		if (datatypecode != 2 && datatypecode != 10) 
+		{
 			AAsset_close(texFileAsset);
 			LOGI("Can only handle image type 2 and 10");
 			return NULL;
 		}
-		if (bitdepth != 24 && bitdepth != 32) {
+		if (bitdepth != 24 && bitdepth != 32) 
+		{
 			AAsset_close(texFileAsset);
 			LOGI("Can only handle pixel depths of 24 and 32");
 			return NULL;
 		}
-		if (colormaptype != 0 && colormaptype != 1) {
+		if (colormaptype != 0 && colormaptype != 1)
+		{
 			AAsset_close(texFileAsset);
 			LOGI("Can only handle colour map types of 0 and 1");
 			return NULL;
@@ -109,10 +119,13 @@ unsigned char* Texture::loadTGAOnly(char* filename) {
 		unsigned char p[5];
 
 		int n =0;
-		while (n < width*height) {
-			if (datatypecode == 2) {                     /* Uncompressed */
+		while (n < width*height) 
+		{
+			if (datatypecode == 2) 
+			{                     /* Uncompressed */
 
-				if (AAsset_read(texFileAsset,p,byteCount) != byteCount) {
+				if (AAsset_read(texFileAsset,p,byteCount) != byteCount)
+				{
 					AAsset_close(texFileAsset);
 					free(this->RGB);
 					LOGI("Unexpected end of file");
@@ -125,9 +138,11 @@ unsigned char* Texture::loadTGAOnly(char* filename) {
 				this->RGB[n*4+3] = p[3];
 
 				n++;
-			} else if (datatypecode == 10) {             /* Compressed */
+			} else if (datatypecode == 10) 
+			{             /* Compressed */
 
-				if (AAsset_read(texFileAsset,p,byteCount+1) != byteCount+1) {
+				if (AAsset_read(texFileAsset,p,byteCount+1) != byteCount+1)
+				{
 					AAsset_close(texFileAsset);
 					LOGI("Unexpected end of file");
 					return NULL;
@@ -141,18 +156,24 @@ unsigned char* Texture::loadTGAOnly(char* filename) {
 
 				n++;
 
-				if (p[0] & 0x80) {         /* RLE chunk */
-					for (int i=0;i<j;i++) {
+				if (p[0] & 0x80)
+				{         /* RLE chunk */
+					for (int i=0;i<j;i++)
+					{
 						this->RGB[n*3+0] = p[3];
 						this->RGB[n*3+1] = p[2];
 						this->RGB[n*3+2] = p[1];
 						this->RGB[n*4+3] = (byteCount == 4)?p[4]:255;
 						n++;
 					}
-				} else {                   /* Normal chunk */
-					for (int i=0;i<j;i++) {
+				} 
+				else 
+				{                   /* Normal chunk */
+					for (int i=0;i<j;i++) 
+					{
 
-						if (AAsset_read(texFileAsset,p,byteCount)  != byteCount) {
+						if (AAsset_read(texFileAsset,p,byteCount)  != byteCount) 
+						{
 							AAsset_close(texFileAsset);
 							LOGI("Unexpected end of file");
 							return false;
@@ -172,13 +193,15 @@ unsigned char* Texture::loadTGAOnly(char* filename) {
 	return NULL;
 }
 
-bool Texture::loadTexture(char* filename) {
+bool Texture::loadTexture(char* filename)
+{
 
 	unsigned char* bytes = this->loadTGAOnly(filename); //note: this->RGB gets set in this function if successful so we don't need to set that variable here
 
 	//now do the GL stuff
 
-	if(bytes) {
+	if(bytes) 
+	{
 
 		this->ID = (GLuint*) malloc(sizeof(GLuint));
 
@@ -203,7 +226,8 @@ bool Texture::loadTexture(char* filename) {
 		free(this->RGB); //cleanup RAM, the image is now residing in GL VRAM
 		return true;
 	}
-	else {
+	else 
+	{
 		LOGI("Tex bytes are EMPTY!");
 		return false;
 	}
