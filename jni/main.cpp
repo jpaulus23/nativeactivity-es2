@@ -95,7 +95,8 @@ int ShaderToUse =0; //0=phong, 1=depth to color.....lame!!!
  * Our saved state data.
  */
 
-struct saved_state {
+struct saved_state 
+{
     float angle;
     int32_t x;
     int32_t y;
@@ -104,7 +105,8 @@ struct saved_state {
 /**
  * Shared state for our app.
  */
-struct engine {
+struct engine 
+{
     struct android_app* app;
 
     ASensorManager* sensorManager;
@@ -124,14 +126,16 @@ struct engine {
  * Initialize an EGL context for the current display.
  */
 
-static int engine_init_display(struct engine* engine) {
+static int engine_init_display(struct engine* engine) 
+{
     // initialize OpenGL ES and EGL
 
 
-    const EGLint attribs[] = {
+    const EGLint attribs[] = 
+    {
             EGL_NATIVE_VISUAL_ID, WINDOW_FORMAT_RGB_565,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-    		EGL_BLUE_SIZE, 5,
+    	    EGL_BLUE_SIZE, 5,
             EGL_GREEN_SIZE, 6,
             EGL_RED_SIZE, 5,
             EGL_DEPTH_SIZE,1,
@@ -220,23 +224,27 @@ static int engine_init_display(struct engine* engine) {
 
     surface = eglCreateWindowSurface(display, configToUse, engine->app->window, NULL);
 
-    if(surface == EGL_NO_SURFACE ) {
+    if(surface == EGL_NO_SURFACE ) 
+    {
     	LOGW("Error making surface, EGL_NO_SURFACE");
     }
 
     //now create the OpenGL ES2 context
-    const EGLint contextAttribs[] = {
+    const EGLint contextAttribs[] = 
+    {
     		EGL_CONTEXT_CLIENT_VERSION , 2,
     		EGL_NONE
     };
 
     context = eglCreateContext(display, configToUse, NULL, contextAttribs);
 
-    if(context == EGL_NO_CONTEXT ) {
+    if(context == EGL_NO_CONTEXT ) 
+    {
     	LOGW("Error making context, EGL_NO_CONTEXT");
     }
 
-    if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
+    if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) 
+    {
         LOGW("Unable to eglMakeCurrent");
         return -1;
     }
@@ -273,10 +281,11 @@ static int engine_init_display(struct engine* engine) {
     // PHONG SHADER //
     //////////////////
 
-    if(!PhongShader.createShader((char*)"phong.vs",(char*)"phong.fs")) {
-    		LOGE("Could not create phong program.");
-    		return false;
-    	}
+    if(!PhongShader.createShader((char*)"phong.vs",(char*)"phong.fs"))
+    {
+    	LOGE("Could not create phong program.");
+    	return false;
+    }
 
 	PositionAttributes = glGetAttribLocation(PhongShader.ID, "aPosition");
 	NormalAttributes =   glGetAttribLocation(PhongShader.ID, "aNormal");
@@ -302,8 +311,8 @@ static int engine_init_display(struct engine* engine) {
     // DEPTH SHADER //
     //////////////////
 
-	if(!DepthShader.createShader((char*)"depthcolor.vs",(char*)"depthcolor.fs")) {
-
+	if(!DepthShader.createShader((char*)"depthcolor.vs",(char*)"depthcolor.fs")) 
+	{
 		LOGE("Could not create depth shader program.");
 		return false;
 	}
@@ -319,7 +328,8 @@ static int engine_init_display(struct engine* engine) {
 	// TEXPASSTHRU (SKYBOX) SHADER //
 	/////////////////////////////////
 
-	if(!TexPassThruShader.createShader((char*)"texpassthru.vs",(char*)"texpassthru.fs")) {
+	if(!TexPassThruShader.createShader((char*)"texpassthru.vs",(char*)"texpassthru.fs")) 
+	{
 		LOGE("Could not create texpassthru program.");
 		return false;
 	}
@@ -343,7 +353,8 @@ static int engine_init_display(struct engine* engine) {
     // ENVIRONMENT SHADER //
     ////////////////////////
 
-	if (!EnvironmentMappingShader.createShader((char*)"environmentcubemap.vs",(char*)"environmentcubemap.fs")) {
+	if (!EnvironmentMappingShader.createShader((char*)"environmentcubemap.vs",(char*)"environmentcubemap.fs")) 
+	{
 		LOGE("Could not create program.");
 		return false;
 	}
@@ -373,7 +384,8 @@ static int engine_init_display(struct engine* engine) {
 	StatueMesh.loadMesh((char*)"athena.obj");
 	checkGlError("loadMesh");
 
-	if(!StoneTexture.loadTexture((char*)"rockish.tga")) {
+	if(!StoneTexture.loadTexture((char*)"rockish.tga")) 
+	{
 		LOGE("texture loading FAILED");
 	}
 
@@ -389,8 +401,10 @@ static int engine_init_display(struct engine* engine) {
  * Just the current frame in the display.
  */
 
-static void engine_draw_frame(struct engine* engine) {
-    if (engine->display == NULL) {
+static void engine_draw_frame(struct engine* engine) 
+{
+    if (engine->display == NULL)
+    {
         // No display.
         return;
     }
@@ -421,11 +435,13 @@ static void engine_draw_frame(struct engine* engine) {
 	//set up the perspective and frustum, etc
 	esMatrixLoadIdentity( &perspective );
 
-	if(ContextHeight > ContextWidth) {
+	if(ContextHeight > ContextWidth) 
+	{
 		aspect = ContextHeight / ContextWidth;
 		esFrustum(&perspective, 1, -1.0f, -aspect, aspect, 0.1f, 50.0f);
 	}
-	else {
+	else 
+	{
 		aspect = ContextWidth/ContextHeight;
 		esFrustum(&perspective, -aspect, aspect, 1, -1.0f, 0.1f, 50.0f);
 	}
@@ -593,7 +609,8 @@ static void engine_draw_frame(struct engine* engine) {
 	esMatrixMultiply( &MVPMatrix,&modelview,&perspective );
 
 	//turn on the shader
-	switch(ShaderToUse) {
+	switch(ShaderToUse) 
+	{
 
 		case 0: //environment mapping shader
 
@@ -693,8 +710,10 @@ static void engine_draw_frame(struct engine* engine) {
 /**
  * Tear down the EGL context currently associated with the display.
  */
-static void engine_term_display(struct engine* engine) {
-    if (engine->display != EGL_NO_DISPLAY) {
+static void engine_term_display(struct engine* engine) 
+{
+    if (engine->display != EGL_NO_DISPLAY) 
+    {
         eglMakeCurrent(engine->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (engine->context != EGL_NO_CONTEXT) {
             eglDestroyContext(engine->display, engine->context);
@@ -747,7 +766,8 @@ void touchScale(float amount) {
 		ScaleAmount = scaleMax;
 }
 
-static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
+static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
+{
 
 	struct engine* engine = (struct engine*)app->userData;
 
@@ -761,17 +781,20 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 		case 1:
 			//rotation
-			if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN ) {
+			if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN ) 
+			{
 
 						X1 = AMotionEvent_getX(event, 0);
 						Y1 = AMotionEvent_getY(event, 0);
 
 						return 1;
 					}
-					else if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_UP) {
+					else if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_UP) 
+					{
 						// Do nothing
 					}
-					else if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_MOVE ) {
+					else if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_MOVE )
+					{
 
 						float dx = AMotionEvent_getX(event, 0) - X1;
 						float dy = AMotionEvent_getY(event, 0) - Y1;
@@ -786,7 +809,8 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 		case 2:
 			//pinch/zoom (multitouch)
 
-			if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN ) {
+			if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_DOWN )
+			{
 
 				X1 = AMotionEvent_getX(event, 0);
 				Y1 = AMotionEvent_getY(event, 0);
@@ -831,7 +855,8 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 			//3 finger tap to switch shaders
 			//LOGI("action: %i%",AKeyEvent_getAction(event));
 
-			if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_UP || AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_POINTER_UP ) {
+			if(AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_UP || AKeyEvent_getAction(event) == AMOTION_EVENT_ACTION_POINTER_UP ) 
+			{
 				LOGI("3 finger tap UP");
 				ShaderToUse ++;
 				if(ShaderToUse>2)
@@ -847,11 +872,13 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 /**
  * Process the next main command.
  */
-static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
+static void engine_handle_cmd(struct android_app* app, int32_t cmd)
+{
 
 	struct engine* engine = (struct engine*)app->userData;
 
-    switch (cmd) {
+    switch (cmd)
+    {
         case APP_CMD_SAVE_STATE:
 
             // The system has asked us to save our current state.  Do so.
@@ -863,7 +890,8 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             break;
         case APP_CMD_INIT_WINDOW:
             // The window is being shown, get it ready.
-            if (engine->app->window != NULL) {
+            if (engine->app->window != NULL)
+            {
                 engine_init_display(engine);
                 engine_draw_frame(engine);
             }
@@ -888,7 +916,8 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
  * event loop for receiving input events and doing other things.
  */
 
-void android_main(struct android_app* state) {
+void android_main(struct android_app* state)
+{
     struct engine engine;
 
     // Make sure glue isn't stripped.
@@ -905,29 +934,34 @@ void android_main(struct android_app* state) {
     engine.app = state;
 
 
-    if (state->savedState != NULL) {
+    if (state->savedState != NULL)
+    {
         // We are starting with a previous saved state; restore from it.
         engine.state = *(struct saved_state*)state->savedState;
     }
 
     // loop waiting for stuff to do.
 
-    while (1) {
+    while (1) 
+    {
         // Read all pending events.
         int ident;
         int events;
         struct android_poll_source* source;
 
         while ((ident=ALooper_pollAll(0, NULL, &events,
-                (void**)&source)) >= 0) {
+                (void**)&source)) >= 0) 
+                {
 
             // Process this event.
-            if (source != NULL) {
+            if (source != NULL) 
+            {
                 source->process(state, source);
             }
 
             // Check if we are exiting.
-            if (state->destroyRequested != 0) {
+            if (state->destroyRequested != 0) 
+            {
                 engine_term_display(&engine);
                 return;
             }

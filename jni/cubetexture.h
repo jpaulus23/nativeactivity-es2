@@ -3,7 +3,8 @@
 
 #include "texture.h"
 
-class CubeTexture{
+class CubeTexture
+{
 
 public:
 
@@ -23,7 +24,8 @@ public:
 
 };
 
-bool CubeTexture::loadCubeTexture(){
+bool CubeTexture::loadCubeTexture()
+{
 
 	if(!RightTex.loadTGAOnly((char*)"right.tga"))
 		return false;
@@ -130,6 +132,5 @@ bool CubeTexture::loadCubeTexture(){
 	LOGI("Done loading cube texture");
 	return true;
 }
-
 
 #endif
