@@ -39,13 +39,15 @@ static double getDeltaTime(void)
 
 	//LOGI("time: %f", rawTime);
 
-	if(TimeHistoryIndex>=10) {
+	if(TimeHistoryIndex>=10)
+	{
 		TimeHistoryIndex=0;
 	}
 
 	TimeSum = 0;
 
-	for(int i =0; i < TimeHistorySize; i++) {
+	for(int i =0; i < TimeHistorySize; i++) 
+	{
 		TimeSum += TimeHistory[i];
 	}
 
@@ -58,9 +60,11 @@ static double getDeltaTime(void)
 }
 
 
-static double getFPS(void) {
+static double getFPS(void)
+{
 
-	if(Timer_DeltaTime != 0.0) {
+	if(Timer_DeltaTime != 0.0)
+	{
 		return 1.0/Timer_DeltaTime;
 	}
 	else return 0.0;
