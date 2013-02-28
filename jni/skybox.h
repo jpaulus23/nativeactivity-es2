@@ -104,7 +104,8 @@ float TopTexCoords[8] = {0.0, 1.0,
 unsigned char TopIndex[6] = {0,1,2,
                            0,2,3};
 
-struct SkyBoxFace{
+struct SkyBoxFace
+{
 	Texture Tex;
 	float* Vertices; // (x,y,z) * 4 = 12 floats
 	float* TexCoords; // (s,t) * 4 = 8 floats
@@ -115,7 +116,8 @@ struct SkyBoxFace{
 	unsigned int VBOIndexId;
 };
 
-class SkyBox {
+class SkyBox
+{
 
 public:
 
@@ -126,14 +128,16 @@ public:
 	SkyBoxFace Back;
 	SkyBoxFace Bottom;
 
-	SkyBox(){
+	SkyBox()
+	{
 	}
 
-	bool loadSkyBox(){
+	bool loadSkyBox()
+	{
 
 		Left.Tex.loadTexture((char*)"left.tga");
 		Front.Tex.loadTexture((char*)"front.tga");
-        Right.Tex.loadTexture((char*)"right.tga");
+        	Right.Tex.loadTexture((char*)"right.tga");
 		Top.Tex.loadTexture((char*)"top.tga");
 		Back.Tex.loadTexture((char*)"back.tga");
 
@@ -254,148 +258,10 @@ public:
 		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, Top.VBOIndexId);
 		glBufferData( GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned char), TopIndex, GL_STATIC_DRAW);
 		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,0);
-		/*
-		Left.Vertices = LeftVert;
-		Left.TexCoords = LeftTex;
-		Left.Index = LeftIndex;
-
-		//vert
-		glGenBuffers(1, &Left.VBOVertId);
-		glBindBuffer( GL_ARRAY_BUFFER, Left.VBOVertId);
-		glBufferData( GL_ARRAY_BUFFER, 12 * sizeof(GLfloat), Left.Vertices, GL_STATIC_DRAW);
-		glBindBuffer( GL_ARRAY_BUFFER, 0);
-
-		//tex
-		glGenBuffers(1, &Left.VBOTexCoordId);
-		glBindBuffer( GL_ARRAY_BUFFER, Left.VBOTexCoordId);
-		glBufferData( GL_ARRAY_BUFFER, 8*sizeof(GLfloat), Left.TexCoords, GL_STATIC_DRAW);
-		glBindBuffer( GL_ARRAY_BUFFER, 0);
-
-		//index buffer
-		glGenBuffers(1, &Left.VBOIndexId);
-		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, Left.VBOIndexId);
-		glBufferData( GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned short), Left.Index, GL_STATIC_DRAW);
-		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER,0);
-
-		LOGI("Skybox Loaded:");
-		LOGI("VBOVertices.Id = %i", Left.VBOVertId);
-		LOGI("VBOTexCoords.Id = %i", Left.VBOTexCoordId);
-		LOGI("VBOIndices.Id = %i", Left.VBOIndexId);
-		*/
+	
 
 
 		return true;
 	}
-/*
-	void renderSkyBox(){
-		glEnable(GL_TEXTURE_2D);
-		//render left
-		glBindTexture(GL_TEXTURE_2D,ID[0]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glBegin(GL_QUADS);
-
-			glTexCoord2f(1,0);
-			glVertex3f(-3.000000,-3.000000,3.000000);
-			glTexCoord2f(1,1);
-			glVertex3f(-3.000000,3.000000,3.000000);
-			glTexCoord2f(0,1);
-			glVertex3f(-3.000000,3.000000,-3.000000);
-			glTexCoord2f(0,0);
-			glVertex3f(-3.000000,-3.000000,-3.000000);
-		glEnd();
-
-		//render front
-		glBindTexture(GL_TEXTURE_2D,ID[1]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glBegin(GL_QUADS);
-			glTexCoord2f(1,0);
-			glVertex3f(3.000000,-3.000000,3.000000);
-			glTexCoord2f(1,1);
-			glVertex3f(3.000000,3.000000,3.000000);
-			glTexCoord2f(0,1);
-			glVertex3f(-3.000000,3.000000,3.000000);
-			glTexCoord2f(0,0);
-			glVertex3f(-3.000000,-3.000000,3.000000);
-		glEnd();
-
-		//render right
-		glBindTexture(GL_TEXTURE_2D,ID[2]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glBegin(GL_QUADS);
-			glTexCoord2f(0,0);
-			glVertex3f(3.000000,-3.000000,3.000000);
-			glTexCoord2f(0,1);
-			glVertex3f(3.000000,3.000000,3.000000);
-			glTexCoord2f(1,1);
-			glVertex3f(3.000000,3.000000,-3.000000);
-			glTexCoord2f(1,0);
-			glVertex3f(3.000000,-3.000000,-3.000000);
-		glEnd();
-
-		//render top
-		glBindTexture(GL_TEXTURE_2D,ID[3]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glBegin(GL_QUADS);
-			glTexCoord2f(1,0);
-			glVertex3f(-3.000000,3.000000,3.000000);
-			glTexCoord2f(1,1);
-			glVertex3f(3.000000,3.000000,3.000000);
-			glTexCoord2f(0,1);
-			glVertex3f(3.000000,3.000000,-3.000000);
-			glTexCoord2f(0,0);
-			glVertex3f(-3.000000,3.000000,-3.000000);
-		glEnd();
-
-		//render back
-		glBindTexture(GL_TEXTURE_2D,ID[4]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glBegin(GL_QUADS);
-			glTexCoord2f(0,0);
-			glVertex3f(3.000000,-3.000000,-3.000000);
-			glTexCoord2f(0,1);
-			glVertex3f(3.000000,3.000000,-3.000000);
-			glTexCoord2f(1,1);
-			glVertex3f(-3.000000,3.000000,-3.000000);
-			glTexCoord2f(1,0);
-			glVertex3f(-3.000000,-3.000000,-3.000000);
-		glEnd();
-
-		//render bottom
-		glBindTexture(GL_TEXTURE_2D,ID[5]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glBegin(GL_QUADS);
-			glTexCoord2f(1,1);
-			glVertex3f(-3.000000,-3.000000,3.000000);
-			glTexCoord2f(1,0);
-			glVertex3f(3.000000,-3.000000,3.000000);
-			glTexCoord2f(0,0);
-			glVertex3f(3.000000,-3.000000,-3.000000);
-			glTexCoord2f(0,1);
-			glVertex3f(-3.000000,-3.000000,-3.000000);
-
-		glEnd();
-		glBindTexture(GL_TEXTURE_2D,0);
-		glDisable(GL_TEXTURE_2D);
-
-	}
-	*/
 };
 #endif
